@@ -1,4 +1,41 @@
-ALTER TABLE loansacc
-ADD year int;
-UPDATE loansacc SET year = '%20xx%' WHERE issue_d LIKE '%20xx% //upprepa för 2007-2015
-SELECT COUNT(id) FROM loansacc GROUP BY year
+/* Här är uppgift i till iii.*/
+SELECT
+	substr(issue_d,5,4) as year,
+	count(id) as loans_count,
+	sum(Case When loan_status='Default' Then 1 Else 0 END) as Default_no,
+	sum(Case When loan_status='Default' Then 1 Else 0 END)/Count(*) * 100.0 as DefaultPct,
+	avg(loan_amnt) as loan_avg
+FROM loansacc
+GROUP BY year
+ORDER BY year
+;
+/* Uppgift iv*/
+SELECT
+	AVG(loan_amnt) as loan_avg,
+	count(id) as loans_count,
+	loan_status
+FROM loansacc
+GROUP BY loan_status
+;
+	
+/*Uppgift v*/
+
+CREATE table V1 as 
+SELECT
+	substr(issue_d,5,4) as year,
+	addr_state as state,
+	sum(Case When loan_status='Current' OR loan_status='Fully Paid' Then 1 Else 0 END)*1.00 as Paid_no,
+	count(id) *1.00 as loans_count,
+	avg(loan_amnt) as loan_avg
+FROM loansacc
+WHERE loan_amnt IS NOT NULL
+GROUP BY year, state
+ORDER BY year, loan_avg desc;
+
+Select 
+	*,
+	Paid_no/loans_count as PaidPct,
+	1 - (Paid_no/loans_count) as NotPaidPct
+From V1
+GROUP BY year, state
+ORDER BY year, loan_avg desc;
