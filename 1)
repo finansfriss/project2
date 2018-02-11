@@ -1,0 +1,4 @@
+ALTER TABLE loansacc
+ADD year int;
+UPDATE loansacc SET year = '%20xx%' WHERE issue_d LIKE '%20xx% //upprepa för 2007-2015
+SELECT COUNT(id) FROM loansacc GROUP BY year
