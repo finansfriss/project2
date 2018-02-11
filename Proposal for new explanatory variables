@@ -1,0 +1,8 @@
+SELECT 
+substr(issue_d,5,4) as year,
+((fico_range_low+fico_range_high)/2) as Avg_fico,
+avg(annual_inc) as Avg_Income,
+loan_status
+FROM loansacc
+WHERE Avg_fico IS NOT NULL
+GROUP BY loan_status, year
