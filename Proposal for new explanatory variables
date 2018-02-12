@@ -6,3 +6,17 @@ loan_status
 FROM loansacc
 WHERE Avg_fico IS NOT NULL
 GROUP BY loan_status, year
+
+
+
+/* Shows how some different variables vary for different loan statuses. */
+SELECT 
+loan_status,
+avg(fico_range_low) AS avg_low_fico, /* Creates variable for average low fico. */
+avg(fico_range_high) AS avg_high_fico, /* Creates variable for average high fico. */
+avg(annual_inc) AS avg_inc, /* Creates variable for average average annual income. */
+avg(loan_amnt) AS loan_avg, /* Creates variable for average loan size. */
+avg(int_rate) AS avg_interest_rate, /* Creates variable for average interest rate. */
+avg(total_acc) AS avg_credit_lines /* Creates variable for average number of credit lines. */
+FROM loansacc
+GROUP BY loan_status
