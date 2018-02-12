@@ -1,0 +1,52 @@
+/* Tasks i. to iii. */
+
+SELECT
+	substr(issue_d,5,4) AS year, /* Create variable with year of issue. */
+	count(id) as loans_count, /* Create variable for number of loans. */
+	sum(CASE WHEN loan_status='Default' THEN 1 ELSE 0 END) AS default_no, /* Create variable for number of defaulted loans. */
+	sum(CASE WHEN loan_status='Default' THEN 1 ELSE 0 END)/count(*) * 100.0 AS default_pct, /* Calculate the percentage of defaulted loans. */
+	avg(loan_amnt) AS loan_avg /* Create variable for average loan amount. */
+FROM loansacc
+GROUP BY year
+ORDER BY year
+;
+
+/* Task iv. */
+
+SELECT
+	avg(loan_amnt) as loan_avg, /* Create variable for average loan amount. */
+	count(id) as loans_count, /* Create variable for number of loans. */
+	loan_status
+FROM loansacc
+GROUP BY loan_status
+ORDER BY loan_avg
+;
+
+	
+/* Task v. */
+
+DROP TABLE IF EXISTS V1;
+
+CREATE TABLE V1 AS /* Creates the table V1. */
+SELECT
+	substr(issue_d,5,4) AS year, /* Create variable with year of issue. */
+	addr_state AS state, /* Renames the variable for the state. */
+	sum(CASE WHEN loan_status='Current' OR loan_status='Fully Paid' THEN 1 ELSE 0 END) * 1.00 AS paid_no, /* Creates variable for loan not being paid back. */
+	count(id) * 1.00 AS loans_count, /* Create variable for number of loans. */
+	avg(loan_amnt) AS loan_avg /* Create variable for average loan amount. */
+FROM loansacc
+WHERE loan_amnt IS NOT NULL
+GROUP BY year, state
+ORDER BY year, loan_avg desc
+;
+
+SELECT 
+	year,
+	state,
+	max(loan_avg), /* Select maximum average value for each year. */
+	paid_no/loans_count AS paid_pct, /* Create variable for percentage paid. */
+	1 - (paid_no/loans_count) AS not_paid_pct /* Create variable for percentage not paid. */
+FROM V1
+GROUP BY year
+ORDER BY year
+;
