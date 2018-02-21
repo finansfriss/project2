@@ -1,0 +1,16 @@
+SELECT
+avg(fico_range_high)as Avg_hi_fico,
+avg(annual_inc) as Avg_Income,
+avg(loan_amnt) AS loan_avg,
+avg(int_rate) AS avg_interest_rate,
+avg(total_acc) AS avg_credit_lines, 
+avg(term) AS avg_term,
+CASE WHEN loan_status = 'Late (16-30 days)' OR loan_status = 'Late (31-120 days)' OR loan_status='In Grace Period' THEN 'late_loans'
+WHEN loan_status = 'Fully Paid' OR loan_status = 'Does not meet the credit policy. Status:Fully Paid' THEN 'paid_loans'
+WHEN loan_status = 'Default' OR loan_status = 'Charged Off' OR loan_status = 'Does not meet the credit policy. Status:Charged Off' THEN 'default_loans'
+ELSE 'current' END AS loan_status
+FROM loansacc
+GROUP BY CASE WHEN loan_status = 'Late (16-30 days)' OR loan_status = 'Late (31-120 days)' OR loan_status='In Grace Period' THEN 'late_loans'
+WHEN loan_status = 'Fully Paid' OR loan_status = 'Does not meet the credit policy. Status:Fully Paid' THEN 'paid_loans'
+WHEN loan_status = 'Default' OR loan_status = 'Charged Off' OR loan_status = 'Does not meet the credit policy. Status:Charged Off' THEN 'default_loans'
+ELSE 'current' END 
