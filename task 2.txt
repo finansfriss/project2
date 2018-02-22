@@ -1,4 +1,10 @@
-/* Clean the data. */
+/* Clean and prepare the data. */
+
+/* Create copy of original table. */
+DROP TABLE IF EXISTS loansacc;
+CREATE TABLE loansacc AS SELECT * FROM loansacc_original;
+
+/* Delete some observations. */
 
 DELETE 
 FROM loansacc
