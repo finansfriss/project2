@@ -2,7 +2,10 @@
 
 DELETE 
 FROM loansacc
-WHERE substr(issue_d,5,4)= '' /* Delete observations where year is empty. */
+WHERE
+	substr(issue_d,5,4)= '' /* Delete observations where year is empty. */
+	OR
+	substr(issue_d,5,4)= '2007'
 ;
 
 /* Tasks i. to iii. */
