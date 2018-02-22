@@ -1,16 +1,28 @@
 /* Tasks i. to iii. */
 
+DROP TABLE IF EXISTS I1;
+
+CREATE TABLE I1 AS /* Creates the table I1. */
 SELECT
 	substr(issue_d,5,4) AS year, /* Create variable with year of issue. */
-	count(id) as loans_count, /* Create variable for number of loans. */
-	sum(CASE WHEN loan_status='Default' OR loan_status='Charged Off' THEN 1 ELSE 0 END) AS default_no, /* Create variable for number of defaulted loans. */
-	sum(CASE WHEN loan_status='Default' OR loan_status='Charged Off' THEN 1 ELSE 0 END)/count(*) * 100.0 AS default_pct, /* Calculate the percentage of defaulted loans. */
+	count(id) * 1.00 as loans_count, /* Create variable for number of loans. */
+	sum(CASE WHEN loan_status='Default' OR loan_status='Charged Off' OR loan_status='Does not meet the credit policy. Status:Charged Off' THEN 1 ELSE 0 END) * 1.00 AS default_no, /* Create variable for number of defaulted loans. */
 	avg(loan_amnt) AS loan_avg /* Create variable for average loan amount. */
 FROM loansacc
+WHERE loan_amnt IS NOT NULL
 GROUP BY year
 ORDER BY year
 ;
 
+SELECT
+	year,
+	loan_avg,
+	loans_count,
+	default_no,
+	(default_no/loans_count) * 100.00 as default_pct
+FROM I1
+ORDER BY year
+;
 
 /* Task iv. */
 
