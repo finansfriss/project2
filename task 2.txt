@@ -50,6 +50,7 @@ SELECT
 FROM loansacc
 WHERE loan_amnt IS NOT NULL
 GROUP BY year, state
+HAVING loans_count > 0 /* Choose the minimum number of loans the state need to have had in that year to qualify for the table. */
 ORDER BY year, loan_avg desc
 ;
 
