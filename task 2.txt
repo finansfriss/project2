@@ -1,8 +1,10 @@
 /* Clean and prepare the data. */
 
-/* Create copy of original table. */
+/* Create copies of original tables. */
 DROP TABLE IF EXISTS loansacc;
 CREATE TABLE loansacc AS SELECT * FROM loansacc_original;
+DROP TABLE IF EXISTS loansrej;
+CREATE TABLE loansrej AS SELECT * FROM loansrej_original;
 
 /* Delete some observations. */
 
@@ -11,7 +13,7 @@ FROM loansacc
 WHERE
 	substr(issue_d,5,4)= '' /* Delete observations where year is empty. */
 	OR
-	substr(issue_d,5,4)= '2007'
+	substr(issue_d,5,4)= '2007' /* Delete observations from 2007 since Lending Club changed model in 2008. */
 ;
 
 /* Tasks i. to iii. */
