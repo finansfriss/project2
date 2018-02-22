@@ -3,8 +3,8 @@
 SELECT
 	substr(issue_d,5,4) AS year, /* Create variable with year of issue. */
 	count(id) as loans_count, /* Create variable for number of loans. */
-	sum(CASE WHEN loan_status='Default' THEN 1 ELSE 0 END) AS default_no, /* Create variable for number of defaulted loans. */
-	sum(CASE WHEN loan_status='Default' THEN 1 ELSE 0 END)/count(*) * 100.0 AS default_pct, /* Calculate the percentage of defaulted loans. */
+	sum(CASE WHEN loan_status='Default' OR loan_status='Charged Off' THEN 1 ELSE 0 END) AS default_no, /* Create variable for number of defaulted loans. */
+	sum(CASE WHEN loan_status='Default' OR loan_status='Charged Off' THEN 1 ELSE 0 END)/count(*) * 100.0 AS default_pct, /* Calculate the percentage of defaulted loans. */
 	avg(loan_amnt) AS loan_avg /* Create variable for average loan amount. */
 FROM loansacc
 GROUP BY year
