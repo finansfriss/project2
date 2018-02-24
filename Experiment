@@ -18,7 +18,7 @@ ELSE 'current' END
 
 
 SELECT 
-	sub.default_no/sub.loans_no as default_rate,
+	(sub.default_no/sub.loans_no) * 100 as default_rate,
 	sub.purpose
 FROM ( 
 	SELECT
