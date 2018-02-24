@@ -25,6 +25,9 @@ ADD COLUMN year
 UPDATE loansacc
 SET year = substr(issue_d,5,4);
 
+/*Set FICO scores with value 0 to NULL */
+update loansacc set last_fico_range_high = null where last_fico_range_high = 0
+
 /* Tasks i. to iii. */
 
 DROP TABLE IF EXISTS I1;
