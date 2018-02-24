@@ -16,6 +16,15 @@ WHERE
 	substr(issue_d,5,4)= '2007' /* Delete observations from 2007 since Lending Club changed model in 2008. */
 ;
 
+/* Add year as a separate column based on issue_d - Makes substr-command excessive in all queries below*/
+ALTER TABLE loansacc 
+ADD COLUMN year
+
+/* run the two commands above before running the query below /*
+
+UPDATE loansacc
+SET year = substr(issue_d,5,4);
+
 /* Tasks i. to iii. */
 
 DROP TABLE IF EXISTS I1;
