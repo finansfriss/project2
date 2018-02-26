@@ -18,7 +18,7 @@ WHERE
 
 /* Add year as a separate column. */
 ALTER TABLE loansacc 
-ADD COLUMN year
+ADD COLUMN year;
 
 /* Run the two commands above before running the query below. */
 
@@ -132,7 +132,7 @@ FROM (
 	GROUP BY grade
 	) sub
 GROUP BY sub.grade
-
+;
 
 /*Subgrade vs default rate*/
 SELECT 
@@ -149,6 +149,7 @@ FROM (
 	GROUP BY sub_grade
 	) sub
 GROUP BY sub.sub_grade
+;
 
 /*Term vs default rate*/
 SELECT 
@@ -165,3 +166,4 @@ FROM (
 	GROUP BY term
 	) sub
 GROUP BY sub.term
+;
