@@ -16,18 +16,20 @@ WHERE
 	substr(issue_d,5,4)= '2007' /* Delete observations from 2007 since Lending Club changed model in 2008. */
 ;
 
-/* Add year as a separate column based on issue_d - Makes substr-command excessive in all queries below*/
+/* Add year as a separate column. */
 ALTER TABLE loansacc 
 ADD COLUMN year
 
-/* run the two commands above before running the query below /*
+/* Run the two commands above before running the query below. */
 
 UPDATE loansacc
 SET year = substr(issue_d,5,4);
 
-/*Set FICO scores with value 0 to NULL */
-update loansacc set last_fico_range_high = null where last_fico_range_high = 0
-update loansacc set last_fico_range_low = null where last_fico_range_low = 0
+/*Set FICO scores with value 0 to NULL. */
+update loansacc set last_fico_range_high = null where last_fico_range_high = 0;
+update loansacc set last_fico_range_low = null where last_fico_range_low = 0;
+update loansacc set sec_app_fico_range_low = null where last_fico_range_high = 0;
+update loansacc set sec_app_fico_range_high = null where last_fico_range_low = 0;
 
 /* Tasks i. to iii. */
 
@@ -35,7 +37,7 @@ DROP TABLE IF EXISTS I1;
 
 CREATE TABLE I1 AS /* Creates the table I1. */
 SELECT
-	substr(issue_d,5,4) AS year, /* Create variable with year of issue. */
+	year,
 	count(id) * 1.00 as loans_count, /* Create variable for number of loans. */
 	sum(CASE WHEN loan_status='Default' OR loan_status='Charged Off' OR loan_status='Does not meet the credit policy. Status:Charged Off' THEN 1 ELSE 0 END) * 1.00 AS default_no, /* Create variable for number of defaulted loans. */
 	avg(loan_amnt) AS loan_avg /* Create variable for average loan amount. */
@@ -58,12 +60,12 @@ ORDER BY year
 /* Task iv. */
 
 SELECT
+	loan_status,
 	avg(loan_amnt) as loan_avg, /* Create variable for average loan amount. */
-	count(id) as loans_count, /* Create variable for number of loans. */
-	loan_status
+	count(id) as loans_count /* Create variable for number of loans. */
 FROM loansacc
 GROUP BY loan_status
-ORDER BY loan_avg
+ORDER BY loan_avg desc
 ;
 
 	
@@ -73,7 +75,7 @@ DROP TABLE IF EXISTS V1;
 
 CREATE TABLE V1 AS /* Creates the table V1. */
 SELECT
-	substr(issue_d,5,4) AS year, /* Create variable with year of issue. */
+	year,
 	addr_state AS state, /* Renames the variable for the state. */
 	sum(CASE WHEN loan_status='Current' OR loan_status='Fully Paid' THEN 1 ELSE 0 END) * 1.00 AS paid_no, /* Creates variable for loan not being paid back. */
 	count(id) * 1.00 AS loans_count, /* Create variable for number of loans. */
@@ -101,16 +103,12 @@ ORDER BY year
 
 SELECT
 	loan_status,
-	grade,
-	sub_grade,
-	term,
 	avg(annual_inc) AS avg_inc, /* Creates variable for average average annual income. */
 	avg(loan_amnt) AS loan_avg, /* Creates variable for average loan size. */
 	avg(int_rate) AS avg_interest_rate, /* Creates variable for average interest rate. */
-	avg(total_acc) AS avg_credit_lines, /* Creates variable for average number of credit lines. */
-	sum(CASE WHEN loan_status='Default' OR loan_status='Charged Off' THEN 1 ELSE 0 END) * 1.00 AS default_no, /* Creates variable for loan not being paid back. */
-	sum(CASE WHEN loan_status='Default' OR loan_status='Charged Off'OR loan_status='Current' OR loan_status='Fully Paid' THEN 1 ELSE 0 END) * 1.00 AS loans_no, /* Create loans for all loans excluding those that do not meed credit policy or are late/grace period */
-	avg(loan_amnt) AS loan_avg /* Create variable for average loan amount. */
+	avg(loan_amnt) AS loan_avg, /* Create variable for average loan amount. */
+	avg(last_fico_range_high) as avg_high_fico, /* Create variable for average upper bound fico. */
+	avg(last_fico_range_low) as avg_low_fico /* Create variable for average lower bound fico. */
 FROM loansacc
 WHERE loan_amnt IS NOT NULL
 GROUP BY loan_status
