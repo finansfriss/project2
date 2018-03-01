@@ -1,6 +1,7 @@
 /* Clean and prepare the data. */
 
 /* Create copy of original table keeping only columns of interest. */
+/* Keeping only individual loans for simplicity. Drops only about 0,1 % of observations. */
 DROP TABLE IF EXISTS loansacc;
 CREATE TABLE loansacc
 AS SELECT
@@ -46,9 +47,10 @@ AS SELECT
 	last_pymnt_d,
 	last_pymnt_amnt,
 	last_credit_pull_d,
+	collections_12_mtths_ex_med,
 	
 FROM loansacc_original;
-
+WHERE application_type = 'Individual'
 
 /* Delete some observations. */
 
