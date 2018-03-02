@@ -250,3 +250,50 @@ FROM (
 	) sub
 GROUP BY sub.term
 ;
+
+/*FICO vs default rate*/
+SELECT 
+	sub.default_no/sub.loans_no as default_rate,
+	sub.FICO
+FROM ( 
+	SELECT
+		loan_status,
+		avg(fico_range_high),
+		CASE 				WHEN fico_range_high <=579 THEN 'poor' 
+								WHEN fico_range_high >=580 and fico_range_high <=669  THEN 'fair'
+								WHEN fico_range_high >=670 and fico_range_high <=739  THEN 'good'
+								WHEN fico_range_high >=740 and fico_range_high <=799  THEN 'very_good'
+								WHEN fico_range_high >=800 THEN 'exceptional' END as FICO,
+		sum(CASE WHEN loan_status='Default' OR loan_status='Charged Off' THEN 1 ELSE 0 END) * 1.00 AS default_no, /* Creates variable for loan not being paid back. */
+		sum(CASE WHEN loan_status='Default' OR loan_status='Charged Off'OR loan_status='Current' OR loan_status='Fully Paid' THEN 1 ELSE 0 END) * 1.00 AS loans_no /* Create loans for all loans excluding those that do not meed credit policy or are late/grace period */
+	FROM loansacc
+	WHERE loan_amnt IS NOT NULL
+	GROUP BY FICO
+	) sub
+GROUP BY sub.FICO
+;
+
+/*Debt to income ratio vs default rate*/
+SELECT 
+	sub.default_no/sub.loans_no as default_rate,
+	sub.dti_range,
+	sub.count
+FROM ( 
+	SELECT
+		loan_status,
+		avg(dti),
+		count(id) as count,
+		CASE 				WHEN dti <=5 THEN '0_5' 
+								WHEN dti >=6 and dti <=10  THEN '6_10'
+								WHEN dti >=11 and dti <=15  THEN '11_15'
+								WHEN dti >=16 and dti <=20  THEN '16_20'
+								WHEN dti >=21 and dti <=30  THEN '21_30'
+								WHEN dti >=31 THEN '31plus' END as dti_range,
+		sum(CASE WHEN loan_status='Default' OR loan_status='Charged Off' THEN 1 ELSE 0 END) * 1.00 AS default_no, /* Creates variable for loan not being paid back. */
+		sum(CASE WHEN loan_status='Default' OR loan_status='Charged Off'OR loan_status='Current' OR loan_status='Fully Paid' THEN 1 ELSE 0 END) * 1.00 AS loans_no /* Create loans for all loans excluding those that do not meed credit policy or are late/grace period */
+	FROM loansacc
+	WHERE loan_amnt IS NOT NULL
+	GROUP BY dti_range
+	) sub
+GROUP BY sub.dti_range
+;
