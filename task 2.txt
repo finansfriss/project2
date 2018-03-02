@@ -124,6 +124,7 @@ SELECT
 	count(id) * 1.00 as loans_count, /* Create variable for number of loans. */
 	sum(CASE WHEN loan_status='Default' OR loan_status='Charged Off' OR loan_status='Does not meet the credit policy. Status:Charged Off' THEN 1 ELSE 0 END) * 1.00 AS default_no, /* Create variable for number of defaulted loans. */
 	avg(loan_amnt) AS loan_avg /* Create variable for average loan amount. */
+	
 FROM loansacc
 WHERE loan_amnt IS NOT NULL
 GROUP BY year
@@ -175,7 +176,8 @@ SELECT
 	state,
 	max(loan_avg), /* Select maximum average value for each year. */
 	paid_no/loans_count AS paid_pct, /* Create variable for percentage paid. */
-	1 - (paid_no/loans_count) AS not_paid_pct /* Create variable for percentage not paid. */
+	1 - (paid_no/loans_count) AS not_paid_pct, /* Create variable for percentage not paid. */
+	loans_count
 FROM V1
 GROUP BY year
 ORDER BY year
